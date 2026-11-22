@@ -293,6 +293,13 @@ func RunMigrations(db *sql.DB) error {
 		WHERE componente = 'laboratorio'
 		`,
 		`
+SELECT setval(
+    'public.horario_grupo_id_seq',
+    COALESCE((SELECT MAX(id) FROM public.horario_grupo), 1),
+    EXISTS (SELECT 1 FROM public.horario_grupo)
+)
+`,
+		`
 		INSERT INTO horario_grupo (grupo_id, dia, hora_inicio, hora_fin, salon, componente)
 		SELECT v.grupo_id, v.dia, v.hora_inicio::time, v.hora_fin::time, v.salon, 'laboratorio'
 		FROM (VALUES
